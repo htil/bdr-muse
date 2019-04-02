@@ -1,6 +1,7 @@
 var thresh = 0.3;
 var chart_options = {};
-var bdr = db.collection("bdr").doc("data");
+let db = firebase.database().ref('bdr');
+// var bdr = db.collection("bdr").doc("");
 
 $( document ).ready(function() {
   // We use an inline data source in the example, usually data would be fetched from a server
@@ -145,7 +146,7 @@ $( document ).ready(function() {
 			}
 
 			// Set the "capital" field of the city 'DC'
-			bdr.update({
+			db.update({
 				engagement: weighted.engagement
 			})
 			.then(function() {
