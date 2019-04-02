@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
-const rosnodejs = require('rosnodejs');
 var sock = null;
 var port = 8888;
 var keypress = require('keypress');
@@ -10,8 +9,8 @@ var flying = true;
 /**
  * ROS Topic Publishing
  */
-const nh = rosnodejs.nh;
-const pub = nh.advertise('/engagement', 'std_msgs/Float32');
+// const nh = rosnodejs.nh;
+// const pub = nh.advertise('/engagement', 'std_msgs/Float32');
 
 server.on('error', function (e) {
   // Handle your error here
@@ -25,6 +24,7 @@ var Server = function(browserPort) {
 	server.listen(browserPort, function () {
 		console.log('Server listening at port %d', browserPort);
 	});
+	this.io.on('connection', this.handleConnection)
 }
 
 Server.prototype.handleConnection = function(socket){
@@ -59,7 +59,7 @@ Server.prototype.handleConnection = function(socket){
 
 Server.prototype.init = () => {
 	console.log("Server initialized!");
-	this.io.on('connection', this.handleConnection)
+	
 }
 
 Server.prototype.sendClientMsg = (id, msg) => {

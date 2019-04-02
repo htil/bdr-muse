@@ -1,5 +1,6 @@
 var thresh = 0.3;
 var chart_options = {};
+var bdr = db.collection("bdr").doc("data");
 
 $( document ).ready(function() {
   // We use an inline data source in the example, usually data would be fetched from a server
@@ -143,6 +144,18 @@ $( document ).ready(function() {
 				data.push(plotTarget);
 			}
 
+			// Set the "capital" field of the city 'DC'
+			bdr.update({
+				engagement: weighted.engagement
+			})
+			.then(function() {
+				console.log("Document successfully updated!");
+			})
+			.catch(function(error) {
+				// The document probably doesn't exist.
+				console.error("Error updating document: ", error);
+			});
+
 			res = [];
 			for (var i = 0; i < data.length; ++i) {
 				res.push([i, data[i]]);
@@ -155,9 +168,9 @@ $( document ).ready(function() {
 				chart_options.colors = ["#F5D552"];
 			}
 			$.plot("#chart", [ drawRawData(res) ], chart_options);
-			window.node.updateRawData(weighted.alpha || 0, "alpha");
-			window.node.updateRawData(weighted.beta  || 0, "beta");
-			window.node.updateRawData(weighted.engagement || 0, "engagement");
+			// window.node.updateRawData(weighted.alpha || 0, "alpha");
+			// window.node.updateRawData(weighted.beta  || 0, "beta");
+			// window.node.updateRawData(weighted.engagement || 0, "engagement");
 		},
 		statusHandler: status => {
 			console.log(status)
