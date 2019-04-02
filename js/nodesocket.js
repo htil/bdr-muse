@@ -12,19 +12,24 @@ var NodeSocket = function(frequency) {
 	alpha = 0
 	beta = 0
 
-	this.forward = function() {
+	this.forward = () => {
 			console.log("forward")
 			this.socket.emit("cmd", "forward")
 	}
 
-	this.takeOff = function() {
+	this.takeOff = () => {
 			console.log("takeoff")
 			this.socket.emit("cmd", "takeoff")
 	}
 
-	this.land = function() {
+	this.land = () => {
 			console.log("land")
 			this.socket.emit("cmd", "land")
+	}
+
+	this.sendEngagementROS = (eng) => {
+		console.log("Sending Engagement to ROS")
+		this.socket.emit("engagement", eng);
 	}
 
 	this.socket.on('alpha', function(packet) {
