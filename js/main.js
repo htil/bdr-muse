@@ -145,17 +145,7 @@ $( document ).ready(function() {
 				data.push(plotTarget);
 			}
 
-			// Set the "capital" field of the city 'DC'
-			db.update({
-				engagement: weighted.engagement
-			})
-			.then(function() {
-				console.log("Document successfully updated!");
-			})
-			.catch(function(error) {
-				// The document probably doesn't exist.
-				console.error("Error updating document: ", error);
-			});
+			nodeConnect.sendEngagementROS(weighted.engagement);
 
 			res = [];
 			for (var i = 0; i < data.length; ++i) {
@@ -163,7 +153,6 @@ $( document ).ready(function() {
 			}
 
 			if (plotTarget  > thresh){
-				nodeConnect.sendEngagementROS(weighted.engagement);
 				chart_options.colors = ["#6ef146"];
 			} else {
 				chart_options.colors = ["#F5D552"];
