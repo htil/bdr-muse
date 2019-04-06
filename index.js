@@ -3,6 +3,7 @@ const app = express();
 var server = require('http').createServer(app);
 const keypress = require('keypress');
 const tello = require('./tello.js');
+const readline = require('readline');
 
 var socket = null;
 var port = 8888;
@@ -76,4 +77,12 @@ server.init();
 tello.init();
 tello.battery();
 
-moveDrone();
+const rl = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout
+});
+  
+rl.question('Press enter to start ', (answer) => {
+	moveDrone();
+	rl.close();
+});
