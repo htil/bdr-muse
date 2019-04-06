@@ -3,6 +3,10 @@ var chart_options = {};
 let db = firebase.database().ref('bdr');
 // var bdr = db.collection("bdr").doc("");
 
+if (!("WebSocket" in window)) {
+	alert("WebSocket NOT supported by your Browser");
+}
+
 $( document ).ready(function() {
   // We use an inline data source in the example, usually data would be fetched from a server
 	nodeConnect = new NodeSocket(500);
@@ -145,7 +149,7 @@ $( document ).ready(function() {
 				data.push(plotTarget);
 			}
 
-			nodeConnect.sendEngagementROS(weighted.engagement);
+			nodeConnect.sendEngagement(weighted.engagement);
 
 			res = [];
 			for (var i = 0; i < data.length; ++i) {

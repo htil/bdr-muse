@@ -2,16 +2,10 @@ const express = require('express');
 const app = express();
 var server = require('http').createServer(app);
 const keypress = require('keypress');
-const rosnodejs = require('rosnodejs');
-const std_msgs = rosnodejs.require('std_msgs').msg;
+const tello = require('./tello.js');
 
 var socket = null;
 var port = 8888;
-
-// ROS Publisher
-const node = rosnodejs.initNode('muse_bci');
-const nh = rosnodejs.nh;
-const pub = nh.advertise('/engagement', 'std_msgs/Float32');
 
 
 // Server
@@ -29,11 +23,13 @@ var Server = function(browserPort) {
 	});
 }
 
+let engagement = 0;
+
 Server.prototype.handleConnection = function(sock){
 	socket = sock;
 	socket.on('error', () => {});
 	socket.on("engagement", (msg) => {
-		pub.publish({data: msg});
+		engagement = msg;
 	});
 }
 
@@ -47,5 +43,37 @@ Server.prototype.sendClientMsg = (id, msg) => {
 	}
 }
 
+let tookoff = false;
+
+function moveDrone(){
+	let distance = 30;
+	let threshold = 0.2;
+	let drone_speed = Math.floor(70 * engagement + 30);
+	if(engagement > threshold) {
+
+		if(tookoff == false) {
+			tookoff = true;
+			console.log('Taking off');
+			tello.takeoff();
+			setTimeout(moveDrone, 5000);
+			return;
+		}
+
+		console.log('Moving drone ' + distance + ' cm at ' + drone_speed + ' cm/s given engagement ' + Math.round(engagement * 100) / 100)
+		tello.speed(drone_speed);
+		tello.forward(distance);
+
+		setTimeout(moveDrone, distance/drone_speed * 1000 + 200);
+	} else {
+		console.log('Engagement (' + Math.round(engagement * 100) / 100 + ') not past threshold of ' + threshold);
+
+		setTimeout(moveDrone, 200);
+	}
+}
+
 server = new Server(port);
 server.init();
+tello.init();
+tello.battery();
+
+moveDrone();

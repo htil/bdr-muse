@@ -27,8 +27,8 @@ var NodeSocket = function(frequency) {
 			this.socket.emit("cmd", "land")
 	}
 
-	this.sendEngagementROS = (eng) => {
-		console.log("Sending Engagement to ROS")
+	this.sendEngagement = (eng) => {
+		console.log("Sending Engagement")
 		this.socket.emit("engagement", eng);
 	}
 
