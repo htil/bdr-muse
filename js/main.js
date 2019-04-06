@@ -1,11 +1,8 @@
 var thresh = 0.3;
 var chart_options = {};
-let db = firebase.database().ref('bdr');
+let db = firebase.database().ref('status/status');
 // var bdr = db.collection("bdr").doc("");
-
-if (!("WebSocket" in window)) {
-	alert("WebSocket NOT supported by your Browser");
-}
+let started = false;
 
 $( document ).ready(function() {
   // We use an inline data source in the example, usually data would be fetched from a server
@@ -149,7 +146,11 @@ $( document ).ready(function() {
 				data.push(plotTarget);
 			}
 
-			nodeConnect.sendEngagement(weighted.engagement);
+			if(started == true){
+				nodeConnect.sendEngagement(weighted.engagement);
+			} else {
+				console.log('Waiting for firebase to send START');
+			}
 
 			res = [];
 			for (var i = 0; i < data.length; ++i) {
@@ -200,6 +201,13 @@ $("li").on('click', function() {
 
   selectedThresh = $(this);
 
+});
+
+db.on('value', function(snapshot){
+	let value = snapshot.val().value;
+	if(value == 'START'){
+		started = true;
+	}
 });
 
 });
